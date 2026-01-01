@@ -1,10 +1,8 @@
 #include <Arduino.h>
 #include "BlastGateController.h"
+#include "config.h"
 
-// pin mapping
-constexpr uint8_t INPUT1_PIN        = 2;
-
-BlastGateController controller;
+BlastGateController<PROJECT_CHANNEL_COUNT> controller;
 
 // timer1 interrupt handler for 10ms intervals
 #if defined(TIMER1_COMPA_vect)
@@ -45,7 +43,7 @@ void initTimer1_10ms() {
 void setup() {
     initTimer1_10ms();
     Serial.begin(debugBaudRate);
-    controller.begin();
+    controller.init(CH_INPUT_PINS, CH_OUTPUT_A_PINS, CH_OUTPUT_B_PINS);
 }
 
 void loop() {

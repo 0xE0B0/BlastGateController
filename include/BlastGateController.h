@@ -2,35 +2,34 @@
 #include <Arduino.h>
 #include "DebugInterface.h"
 #include "Debounce.h"
+#include "Channel.h"
+#include "config.h"
 #include "version.h"
 
+template<size_t CHANNEL_COUNT>
 class BlastGateController {
 public:
+
     BlastGateController();
 
-    void begin();
+    void init(const uint8_t *chInputPins, const uint8_t *chOutputAPins, const uint8_t *chOutputBPins);
     void update();
 
     void debounce() {
-        auto input = (((digitalRead(inputPin) == LOW) ? CMD_INPUT_1 : 0) |
-                      ((digitalRead(inputPin) == LOW) ? CMD_INPUT_2 : 0) |
-                      ((digitalRead(inputPin) == LOW) ? CMD_INPUT_3 : 0) |
-                      ((digitalRead(inputPin) == LOW) ? CMD_INPUT_4 : 0));
+        uint8_t input = 0;
+        for (size_t i = 0; i < CHANNEL_COUNT; ++i)
+            input |= ((digitalRead(inputPins[i]) == LOW) ? (1u << i) : 0);  // low active inputs
         deb.tick(input);
     }
 
 private:
+    const uint8_t *inputPins = nullptr;
+    Channel channels[CHANNEL_COUNT];
+    // debounce engine (10ms tick)
+    Debounce<uint8_t, 10> deb{0, 0};
 
-    // pin identifiers
-    static constexpr uint8_t CMD_INPUT_1 = 1;
-    static constexpr uint8_t CMD_INPUT_2 = 2;
-    static constexpr uint8_t CMD_INPUT_3 = 4;
-    static constexpr uint8_t CMD_INPUT_4 = 8;
-
-    // hardware
-    uint8_t inputPin;
-    Debounce<uint8_t, 10> deb = Debounce<uint8_t>(0, 0);
-
-    inline bool getInputState() { return deb.getKeyState(CMD_INPUT_1); }
- 
 };
+
+// Prevent implicit instantiation of the project specialization in other TUs
+extern template class BlastGateController<PROJECT_CHANNEL_COUNT>;
+
