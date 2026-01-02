@@ -11,10 +11,11 @@ public:
 
     BlastGateController();
 
-    void init(const uint8_t *chInputPins, const uint8_t *chOutputAPins, const uint8_t *chOutputBPins);
+    void init(const uint8_t vacuumOutputPin, const uint8_t *chInputPins, const uint8_t *chOutputAPins, const uint8_t *chOutputBPins);
     void loop();
 
 private:
     Channel channels[CHANNEL_COUNT];
+    uint8_t vacuumPin = 0;
 
 };
