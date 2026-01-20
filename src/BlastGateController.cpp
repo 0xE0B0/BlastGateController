@@ -20,7 +20,7 @@ void BlastGateController<CHANNEL_COUNT>::init(const uint8_t vacuumOutputPin, con
         channels[i].init(chInputPins[i], chOutputPins[i]);
     }
     vacuum.init(vacuumOutputPin);
-    Serial << beginl << "Initialized with " << CHANNEL_COUNT << " channels" << DI::endl;
+    Serial << beginl << "initialized with " << CHANNEL_COUNT << " channels" << DI::endl;
 }
 
 template<size_t CHANNEL_COUNT>
@@ -42,7 +42,7 @@ void BlastGateController<CHANNEL_COUNT>::loop() {
     for (size_t i = 0; i < CHANNEL_COUNT; ++i) {
         if (request[i]) {
             if (channels[i].getOutputState() != Channel::State::OPEN) {
-                Serial << beginl << "open channel " << i << DI::endl;
+                Serial << beginl << green << "open channel idx " << i << DI::endl;
                 channels[i].setOutputState(Channel::State::OPEN);
             }
         }
@@ -60,7 +60,7 @@ void BlastGateController<CHANNEL_COUNT>::loop() {
         vacuum.switchTo(true, activeChannels);
         for (size_t i = 0; i < CHANNEL_COUNT; ++i) {
             if (!request[i] && (channels[i].getOutputState() == Channel::State::OPEN)) {
-                Serial << beginl << "close channel " << i << DI::endl;
+                Serial << beginl << "close channel idx " << i << DI::endl;
                 channels[i].setOutputState(Channel::State::CLOSED);
             }
         }

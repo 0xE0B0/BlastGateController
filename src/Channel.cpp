@@ -23,6 +23,6 @@ void Channel::loop() {
         } else if (newState == State::CLOSED) {
             digitalWrite(output, LOW);
         }
-        Serial << beginl << blue << "Channel " << input << " set to state " << state << DI::endl;
+        Serial << beginl << cyan << "channel pin " << input << " set to state " << state << DI::endl;
     }
 }
