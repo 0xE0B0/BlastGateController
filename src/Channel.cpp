@@ -17,35 +17,12 @@ void Channel::loop() {
         }
     }
     if (newState != state) {
-        if (!transition) {
-            if (newState == State::OFF) {
-                digitalWrite(outputA, LOW);
-                digitalWrite(outputB, LOW);
-                state = newState;
-            } else if (newState == State::OPEN) {
-                // OPEN: set A high first, then after delay set B low
-                digitalWrite(outputA, HIGH);
-                transitionStart = millis();
-                transition = true;
-            } else if (newState == State::CLOSED) {
-                // CLOSED: set A low first, then after delay set B high
-                digitalWrite(outputA, LOW);
-                transitionStart = millis();
-                transition = true;
-            }
-        } else if (transition) {
-            // wait for delay and complete transition
-            if ((unsigned long)(millis() - transitionStart) >= SWITCH_DELAY_MS) {
-                if (newState == State::OPEN) {
-                    digitalWrite(outputB, LOW);
-                } else if (newState == State::CLOSED) {
-                    digitalWrite(outputB, HIGH);
-                }
-                state = newState;
-                transition = false;
-                transitionStart = 0;
-                Serial << beginl << blue << "Channel " << input << " set to state " << state << DI::endl;
-            }
+        state = newState;
+        if (newState == State::OPEN) {
+            digitalWrite(output, HIGH);
+        } else if (newState == State::CLOSED) {
+            digitalWrite(output, LOW);
         }
+        Serial << beginl << blue << "Channel " << input << " set to state " << state << DI::endl;
     }
 }

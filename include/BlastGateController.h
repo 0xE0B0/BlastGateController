@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include "DebugInterface.h"
 #include "Channel.h"
+#include "VacuumCleaner.h"
 #include "config.h"
 #include "version.h"
 
@@ -11,11 +12,11 @@ public:
 
     BlastGateController();
 
-    void init(const uint8_t vacuumOutputPin, const uint8_t *chInputPins, const uint8_t *chOutputAPins, const uint8_t *chOutputBPins);
+    void init(const uint8_t vacuumOutputPin, const uint8_t *chInputPins, const uint8_t *chOutputPins);
     void loop();
 
 private:
     Channel channels[CHANNEL_COUNT];
-    uint8_t vacuumPin = 0;
+    VacuumCleaner vacuum;
 
 };

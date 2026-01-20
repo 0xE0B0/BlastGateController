@@ -7,28 +7,26 @@ public:
     Channel() = default;
 
     enum class State {
-        OFF,
+        INIT,
         OPEN,
         CLOSED
     };
 
     friend inline Print& operator<<(Print &stream, State s) {
         switch (s) {
-            case State::OFF:   stream << "OFF"; break;
-            case State::OPEN:  stream << "OPEN"; break;
-            case State::CLOSED:stream << "CLOSED"; break;
+            case State::INIT:   stream << "INIT"; break;
+            case State::OPEN:   stream << "OPEN"; break;
+            case State::CLOSED: stream << "CLOSED"; break;
         }
         return stream;
     }
 
-    void init(uint8_t inputPin, uint8_t outputAPin, uint8_t outputBPin) {
+    void init(uint8_t inputPin, uint8_t outputPin) {
         input = inputPin;
-        outputA = outputAPin;
-        outputB = outputBPin;
+        output = outputPin;
         pinMode(input, INPUT_PULLUP);
-        pinMode(outputA, OUTPUT);
-        pinMode(outputB, OUTPUT);
-        setOutputState(State::OFF);
+        pinMode(output, OUTPUT);
+        setOutputState(State::INIT);
     }
 
     void loop();
@@ -47,16 +45,10 @@ public:
 
 private:
     uint8_t input = 0;
-    uint8_t outputA = 0;
-    uint8_t outputB = 0;
+    uint8_t output = 0;
     bool inputState = false;
     uint64_t inputDebounce = 0;
-    State state = State::OFF;
-    State newState = State::OFF;
+    State state = State::INIT;
+    State newState = State::INIT;
 
-    unsigned long transitionStart = 0;
-    bool transition = false; // false = idle, true = waiting for second output
-
-    // delay between switching outputs to avoid shorts
-    static constexpr uint8_t SWITCH_DELAY_MS = 5;
 };
