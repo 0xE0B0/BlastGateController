@@ -12,19 +12,18 @@ BlastGateController<CHANNEL_COUNT>::BlastGateController() {}
 
 template<size_t CHANNEL_COUNT>
 void BlastGateController<CHANNEL_COUNT>::init(const uint8_t vacuumOutputPin, const uint8_t *chInputPins, const uint8_t *chOutputPins) {
-    Serial << magenta << F("BlastGateController v");
-    Serial << magenta << BGC_VERSION_MAJOR << F(".") << BGC_VERSION_MINOR << F(".") << BGC_VERSION_SUB;
-    Serial << magenta << F(" (") <<  __TIMESTAMP__  << F(")") << DI::endl;
-
     for (size_t i = 0; i < CHANNEL_COUNT; ++i) {
         channels[i].init(chInputPins[i], chOutputPins[i]);
     }
     vacuum.init(vacuumOutputPin);
     Serial << beginl << "initialized with " << CHANNEL_COUNT << " channels" << DI::endl;
+    initialized = true;
 }
 
 template<size_t CHANNEL_COUNT>
 void BlastGateController<CHANNEL_COUNT>::loop() {
+    if (!initialized)
+        return;
     // Step 1: let each channel sample inputs
     for (size_t i = 0; i < CHANNEL_COUNT; ++i) {
         channels[i].loop();
@@ -60,7 +59,7 @@ void BlastGateController<CHANNEL_COUNT>::loop() {
         vacuum.switchTo(true, activeChannels);
         for (size_t i = 0; i < CHANNEL_COUNT; ++i) {
             if (!request[i] && (channels[i].getOutputState() == Channel::State::OPEN)) {
-                Serial << beginl << "close channel idx " << i << DI::endl;
+                Serial << beginl << magenta << "close channel idx " << i << DI::endl;
                 channels[i].setOutputState(Channel::State::CLOSED);
             }
         }
