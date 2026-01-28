@@ -16,7 +16,7 @@ public:
     static void packetSent_cb(uint8_t* mac, uint8_t sendStatus);
 
 private:
-    uint8_t pin;
+    uint8_t pin;  // default: 0xFF = no pin assigned
     bool lastState;
     bool initialized = false;
 

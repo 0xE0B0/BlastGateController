@@ -7,8 +7,10 @@ static inline Print& beginl(Print &stream) {
 
 void VacuumCleaner::init(uint8_t vacuumPin) {
     pin = vacuumPin;
-    pinMode(pin, OUTPUT);
-    digitalWrite(pin, LOW);
+    if (pin != 0xff) {
+        pinMode(pin, OUTPUT);
+        digitalWrite(pin, LOW);
+    }
     lastState = false;
 }
 
@@ -32,13 +34,12 @@ void VacuumCleaner::setupEspNowHost() {
 }
 
 void VacuumCleaner::switchTo(bool active, uint8_t activeChannels) {
-    if (pin != 0xff) {
-        if (active != lastState) {
+    if (active != lastState) {
+        if (pin != 0xff)
             digitalWrite(pin, active ? HIGH : LOW);
-            Serial << beginl << blue << "switch " << (active ? "on" : "off") << DI::endl;
-            sendState(active, activeChannels);
-            lastState = active;
-        }
+        Serial << beginl << blue << "switch " << (active ? "on" : "off") << DI::endl;
+        sendState(active, activeChannels);
+        lastState = active;
     }
 }
 

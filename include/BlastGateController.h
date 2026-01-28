@@ -16,6 +16,7 @@ public:
     void loop();
 
 private:
+    bool initialized = false;
     Channel channels[CHANNEL_COUNT];
     VacuumCleaner vacuum;
 
